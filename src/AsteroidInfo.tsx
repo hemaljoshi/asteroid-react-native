@@ -1,11 +1,4 @@
-import {
-  Text,
-  StyleSheet,
-  View,
-  TextInput,
-  TouchableOpacity,
-  Button,
-} from 'react-native';
+import { Text, StyleSheet, View, TouchableOpacity } from 'react-native';
 import React, { Component } from 'react';
 import {
   NavigationProp,
@@ -13,22 +6,15 @@ import {
   RouteProp,
 } from '@react-navigation/native';
 
-interface asteroidData {
-  // response: {
-  //   name: string;
-  //   nasa_jpl_url: string;
-  //   is_potentially_hazardous_asteroid: boolean;
-  // };
-}
-
 interface Props {
+  navigation: NavigationProp<ParamListBase>;
   route: RouteProp<{ params: { data: any } }, 'params'>;
 }
 
 export default class AsteroidInfo extends Component<Props> {
   render() {
+    const { goBack } = this.props.navigation;
     const data = this.props.route.params.data;
-
     return (
       <View style={styles.container}>
         <View style={styles.subContainer}>
@@ -41,6 +27,9 @@ export default class AsteroidInfo extends Component<Props> {
             Is potentially hazardous asteroid:{' '}
             {` ${data?.is_potentially_hazardous_asteroid}`}
           </Text>
+          <TouchableOpacity style={styles.buttonStyle} onPress={() => goBack()}>
+            <Text style={styles.buttonTextStyle}>Go Back</Text>
+          </TouchableOpacity>
         </View>
       </View>
     );
@@ -74,4 +63,12 @@ const styles = StyleSheet.create({
     fontSize: 15,
     marginBottom: 5,
   },
+  buttonStyle: {
+    borderRadius: 5,
+    marginTop: 20,
+    backgroundColor: '#4cb742',
+    padding: 7,
+    alignItems: 'center',
+  },
+  buttonTextStyle: { color: 'white', fontWeight: '600' },
 });
