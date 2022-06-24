@@ -7,9 +7,12 @@ import {
   ActivityIndicator,
   Alert,
 } from 'react-native';
-import React, { Component } from 'react';
+import React, { Component, PureComponent } from 'react';
 import { NavigationProp, ParamListBase } from '@react-navigation/native';
 import axios from 'axios';
+import AppBar from '../Navigators/AppBar';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 
 const apiKey = '6QaguSak47jKcQTU26GBRVVBxYwcVsYirSKM7Erq';
 
@@ -68,9 +71,9 @@ export default class Asteroid extends Component<Props, State> {
       )
       .then((res) => {
         const data: any = res.data;
-        this.props.navigation.navigate('info', { data: data });
+        this.props.navigation.navigate('Info', { data: data });
         this.setState({
-          asteroidID: '',
+          // asteroidID: '',
           loading: false,
         });
       })
@@ -83,37 +86,75 @@ export default class Asteroid extends Component<Props, State> {
       });
   };
 
+  handleLogout = async () => {
+    try {
+      await AsyncStorage.removeItem('token');
+      this.props.navigation.navigate('login');
+    } catch (e) {
+      console.log(e);
+    }
+  };
+  componentDidMount() {
+    this.props.navigation.addListener('focus', () => {
+      this.setState({
+        asteroidID: '',
+      });
+    });
+  }
+
+  firstBtn = {
+    title: 'Back',
+    onPress: () => {
+      this.props.navigation.goBack();
+    },
+  };
+  lastBtn = {
+    title: 'Logout',
+    onPress: this.handleLogout,
+    backgroundColor: { backgroundColor: '#ff2852' },
+  };
+
   render() {
     const { loading, asteroidID } = this.state;
     return (
-      <View style={styles.container}>
-        {loading ? (
+      <>
+        <SafeAreaProvider>
+          <AppBar
+            firstBtn={this.firstBtn}
+            title='Asteroid'
+            lastBtn={this.lastBtn}
+            style={styles.appbar}
+          />
           <View style={styles.container}>
-            <ActivityIndicator size='large' />
+            {loading ? (
+              <View style={styles.container}>
+                <ActivityIndicator size='large' />
+              </View>
+            ) : (
+              <View style={styles.subContainer}>
+                <Text style={styles.titleText}>Search Asteroid Data</Text>
+                <TextInput
+                  value={asteroidID}
+                  style={styles.textInputStyle}
+                  onChangeText={this.handleonChangeAsteroidId}
+                />
+                <TouchableOpacity
+                  style={styles.randomButtonStyle}
+                  onPress={this.onClickRandom}
+                >
+                  <Text style={styles.buttonTextStyle}>Random</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.buttonStyle}
+                  onPress={this.handleSubmit}
+                >
+                  <Text style={styles.buttonTextStyle}>Submit</Text>
+                </TouchableOpacity>
+              </View>
+            )}
           </View>
-        ) : (
-          <View style={styles.subContainer}>
-            <Text style={styles.titleText}>Search Asteroid Data</Text>
-            <TextInput
-              value={asteroidID}
-              style={styles.textInputStyle}
-              onChangeText={this.handleonChangeAsteroidId}
-            />
-            <TouchableOpacity
-              style={styles.randomButtonStyle}
-              onPress={this.onClickRandom}
-            >
-              <Text style={styles.buttonTextStyle}>Random</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.buttonStyle}
-              onPress={this.handleSubmit}
-            >
-              <Text style={styles.buttonTextStyle}>Submit</Text>
-            </TouchableOpacity>
-          </View>
-        )}
-      </View>
+        </SafeAreaProvider>
+      </>
     );
   }
 }
@@ -124,18 +165,22 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+  appbar: {
+    backgroundColor: '#415A77',
+  },
   subContainer: {
+    backgroundColor: 'white',
     padding: 38,
     margin: 10,
-    borderRadius: 10,
+    borderRadius: 8,
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
-      height: 1,
+      height: 3,
     },
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
-    elevation: 0.1,
+    shadowOpacity: 0.27,
+    shadowRadius: 4.65,
+    elevation: 6,
   },
   titleText: {
     fontSize: 28,

@@ -1,10 +1,9 @@
-import { StatusBar } from 'expo-status-bar';
-import { Component, ReactNode } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
-import Asteroid from './src/Asteroid';
-import AsteroidInfo from './src/AsteroidInfo';
+import { Component } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import Home from './src/Components/Home';
+import BottomTabs from './src/Navigators/BottomTabs';
+import Splash from './src/Navigators/Splash';
 
 const Stack = createNativeStackNavigator();
 
@@ -13,17 +12,11 @@ export default class App extends Component {
     return (
       <NavigationContainer>
         <Stack.Navigator screenOptions={{ headerShown: false }}>
-          <Stack.Screen name='home' component={Asteroid} />
-          <Stack.Screen name='info' component={AsteroidInfo} />
+          <Stack.Screen name='splash' component={Splash} />
+          <Stack.Screen name='login' component={Home} />
+          <Stack.Screen name='tabs' component={BottomTabs} />
         </Stack.Navigator>
       </NavigationContainer>
     );
   }
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-  },
-});
